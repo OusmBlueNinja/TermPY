@@ -10,6 +10,7 @@ if os.name != "nt":
     import readline
 import threading
 import signal
+import requests
 
 def handler(signum, frame):
     return
@@ -142,7 +143,15 @@ class packagemanager:
             with open(("./packages/"+name+".py"), "r") as f:
                 f.close()
         except FileNotFoundError:
-            raise Exception("Package could not be found, make sure package source is in [ packages ] folder.")
+            try:
+                url = f"https://raw.githubusercontent.com/OusmBlueNinja/TermPY/main/packages/{name}.py"
+                r = requests.get(url)
+                #print(r.text)
+                fileInstallingCreator = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.basename(url))
+                with open(fileInstallingCreator, "w") as newFile:
+                    newFile.write(r.text)
+            except Exception as e:
+                raise Exception("Package could not be found, make sure package source is in [ packages ] folder.")
         
         try:
             
@@ -244,7 +253,15 @@ def main():
             if error[0]==1:
                 
                 print(f"{color.red}ERROR{color.white}:{color.red} {error[1]}{color.white}")
+                
+
+
+def start():
+    try:
+        main()
+    except KeyboardInterrupt:
+        start()
 
 
 if __name__ == '__main__':
-    main()
+    start()
