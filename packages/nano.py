@@ -1,6 +1,9 @@
 #["nano", "packages.nano", ["nano"]]
 
 import os
+from pygments import highlight
+from pygments.lexers import PythonLexer
+from pygments.formatters import TerminalFormatter
 
 class TextEditor:
     def __init__(self):
@@ -42,9 +45,10 @@ class TextEditor:
                 print("Invalid command.")
 
     def display(self):
-        print("Editing: "+self.file)
+        print("Editing: " + self.file)
         for i, line in enumerate(self.lines):
-            print(f"{i + 1}: {line}", end="")
+            highlighted_line = highlight(line, PythonLexer(), TerminalFormatter())
+            print(f"{i + 1}: {highlighted_line}", end="")
             
     def newline(self):
         self.lines.append("\n")
