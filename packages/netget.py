@@ -5,9 +5,10 @@ import os, sys
 
 def netget(command: list):
     
-    #print(command, len(command))
+    print(command, len(command))
     if len(command) != 2:
         print("comand requires [ url ] [ path ]")
+        return
     
     url = command[0]
     location = command[1]
