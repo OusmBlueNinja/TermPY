@@ -139,6 +139,8 @@ class packagemanager:
         
     
     def install(self, name: str) -> int:
+        if name in [row[0] for row in Packages.packages]:
+                raise Exception("Package already installed")
         try:
             if not os.path.exists(f"./packages/{name}.py"):
                 raise FileNotFoundError(name)

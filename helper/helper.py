@@ -23,7 +23,7 @@ def install(name:str, Packages:list):
     try:
             
             if name in [row[0] for row in Packages.packages]:
-                raise Exception("Package already installed")
+                return
             
             with open(("./packages/"+name+".py"), "r") as f:
                 line = f.readline()
