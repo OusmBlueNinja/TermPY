@@ -54,7 +54,7 @@ def install(name:str, Packages:list):
 
             Packages.packages.append(toList(line))
             Packages.update(Packages.packages)
-            print(f"\n{color.green}Success:{color.white} Successfully installed {name}.")
+            print(f"{color.green}Success:{color.white} Successfully installed {name}.")
 
     except Exception as e:
         raise Exception(f"{color.red}{e}")'''
