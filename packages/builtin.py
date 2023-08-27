@@ -1,8 +1,10 @@
 #["builtin", "packages.builtin", ["echo", "ls", "rm", "clear", "cd", "ll"]]
 import os
 import stat
-import pwd
-import grp
+
+if os.name != 'nt':
+    import pwd
+    import grp
 import time
 
 
@@ -75,7 +77,9 @@ def ls(args):
         
         
 def ll(args):
-    del args
+    if os.name != 'nt':
+        print("This command only works for linux")
+        return
     dir_path = os.getcwd()
 
     green_color = '\033[32m'
@@ -89,6 +93,7 @@ def ll(args):
             for entry in entries:
                 file_stat = entry.stat()
                 file_name = entry.name
+                
 
                 pw = pwd.getpwuid(file_stat.st_uid)
                 gr = grp.getgrgid(file_stat.st_gid)

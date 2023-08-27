@@ -51,9 +51,10 @@ def getPrompt():
     path = os.getcwd()
 
     # Set up tab completion for file and directory names
-    completer = readline.get_completer()
-    readline.set_completer_delims(' \t\n')
-    readline.parse_and_bind("tab: complete")
+    if os.name != "nt":
+        completer = readline.get_completer()
+        readline.set_completer_delims(' \t\n')
+        readline.parse_and_bind("tab: complete")
 
     prompt = color.white + "┌ " + color.green + username + color.white + ":" + color.blue + path + color.white + "\n└ $ "
     return prompt
