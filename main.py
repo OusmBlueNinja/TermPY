@@ -6,7 +6,8 @@ from inspect import isfunction
 import random
 import time
 import ast
-#import readline
+if os.name != "nt":
+    import readline
 import threading
 
 
@@ -158,7 +159,7 @@ class packagemanager:
             print(f"\n{color.green}Success:{color.white} Successfully installed {name}.")
 
         except Exception as e:
-            raise Exception(e)
+            raise Exception(f"{color.red}{e}")
 
 
 

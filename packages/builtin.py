@@ -94,9 +94,9 @@ def ll(args):
                 file_stat = entry.stat()
                 file_name = entry.name
                 
-
-                pw = pwd.getpwuid(file_stat.st_uid)
-                gr = grp.getgrgid(file_stat.st_gid)
+                if os.name != 'nt':
+                    pw = pwd.getpwuid(file_stat.st_uid)
+                    gr = grp.getgrgid(file_stat.st_gid)
 
                 is_hidden = (file_name and file_name[0] == '.')
 
