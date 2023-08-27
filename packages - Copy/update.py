@@ -23,18 +23,11 @@ def download_and_save(url):
 def upd(command):
     input(f"Settings: {fileList}, {os.path.dirname(os.path.realpath(__file__))}\nPress enter to continue")
 
-    print("Downloading and saving files:")
-    
     threads = []
     for url in fileList:
         thread = threading.Thread(target=download_and_save, args=(url,))
         threads.append(thread)
         thread.start()
 
-    # Display loading animation
-    while any(thread.is_alive() for thread in threads):
-        for _ in range(len(threads)):
-            print(".", end="", flush=True)
-            time.sleep(0.5)
-    
-    print("\nAll files downloaded and saved!")
+    for thread in threads:
+        thread.join()
