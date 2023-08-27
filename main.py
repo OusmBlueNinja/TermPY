@@ -13,7 +13,51 @@ import signal
 import requests
 import subprocess
 
+helper = '''import ast
+class color:
+    green = "\033[1;32m"
+    blue = "\033[1;34m"
+    white = "\033[0m"
+    green  = "\033[1;32m"
+    red  = "\033[1;31m"
+    white  = "\033[0m"
+    blue  = "\033[1;34m"
+    orange  = "\033[1;33m"
 
+def update(self, packages):
+        with open(("./packages/pakk.conf"), "w") as f:
+                f.write(str(packages))
+                
+def toList(List: str) -> list:
+        
+        newList = ast.literal_eval(List)
+        if isinstance(newList, list):
+            return newList
+                
+def install(name:str, Packages:list):
+    try:
+            
+            if name in [row[0] for row in Packages.packages]:
+                return
+            
+            with open(("./packages/"+name+".py"), "r") as f:
+                line = f.readline()
+            
+            line = line.strip("#")
+           
+            # ... (existing code)
+
+            print("Installing Package")
+            
+
+            
+
+            Packages.packages.append(toList(line))
+            Packages.update(Packages.packages)
+            print(f"\n{color.green}Success:{color.white} Successfully installed {name}.")
+
+    except Exception as e:
+        raise Exception(f"{color.red}{e}")'''
 
 
 class color:
@@ -28,7 +72,22 @@ def restart_program():
     subprocess.call([python, __file__])
     sys.exit()
 
-
+try:
+    try:
+        os.mkdir("./helper/")
+        try:
+            with open(f"./helper/helper.py", "w") as f:
+                f.write(helper)
+        except:
+            print("err")
+    except:
+        pass
+    os.mkdir("./packages/")
+    with open(f"./packages/pakk.conf", "x") as f:
+        f.close()
+    
+except:
+    pass
 
 
 
@@ -50,7 +109,18 @@ def call(full_module_name, func_name, *args, **kwargs):
     else:
         raise Exception("Command Not Found")
             
-        
+            
+def download(name: str, Packages: list):
+                url = f"https://raw.githubusercontent.com/OusmBlueNinja/TermPY/main/packages/{name}.py"
+                r = requests.get(url)
+                #print(r.text)
+                fileInstallingCreator = os.path.join(os.path.dirname(os.path.realpath(__file__)), "packages", name+".py")
+                print("Saving file to disk")
+                with open(fileInstallingCreator, "w") as newFile:
+                    newFile.write(r.text)
+                time.sleep(1)
+                
+                
             
 
 def getPrompt():
@@ -96,18 +166,28 @@ class packages:
                 self.packages = toList(f.readline())
         except Exception as e:
             print(e)
-            self.packages = [["builtin", "packages.builtin", ["echo", "ls", "rm", "clear", "cd", "ll"]]]
+            try:
+                with open(("./packages/builtin.py"), "r") as f:
+                    f.close()
+                self.packages = [["builtin", "packages.builtin", ["echo", "ls", "rm", "clear", "cd", "ll"]]]
+            except:
+                self.packages = []
+                download("builtin", self.packages)
+                self.packages = [["builtin", "packages.builtin", ["echo", "ls", "rm", "clear", "cd", "ll"]]]
             self.update(self.packages)
+    
         
         
     def update(self, packages):
         with open(("./packages/pakk.conf"), "w") as f:
                 f.write(str(packages))
-        
-        
-        
 
-Packages = packages()
+
+     
+        
+Packages = packages()       
+
+
 
 class packagemanager:
     def __init__(self, args):
@@ -148,17 +228,10 @@ class packagemanager:
             
         except FileNotFoundError:
                 print("Downloading File from Source")
-                url = f"https://raw.githubusercontent.com/OusmBlueNinja/TermPY/main/packages/{name}.py"
-                r = requests.get(url)
-                #print(r.text)
-                fileInstallingCreator = os.path.join(os.path.dirname(os.path.realpath(__file__)), "packages", name+".py")
-                print("Saving file to disk")
-                with open(fileInstallingCreator, "w") as newFile:
-                    newFile.write(r.text)
-                time.sleep(1)
+                download(name, Packages)
                 call("helper.helper", "install", name, Packages)
                 print(f"{color.orange}WARNING: {color.white}Restarting Program")
-                restart_program()
+                restart_program() 
         except Exception as e:
             raise Exception(f"Package could not be found, make sure package source is in [ packages ] folder. {e}")
         
@@ -266,9 +339,10 @@ def main():
 
 
 def start():
-    if not os.path.exists(f"./packages"):
-        with open(f"/packages", "w") as f:
-            f.close()
+    
+    
+        
+    
     try:
         print("")
         main()
