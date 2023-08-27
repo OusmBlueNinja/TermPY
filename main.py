@@ -266,6 +266,9 @@ def main():
 
 
 def start():
+    if not os.path.exists(f"./packages"):
+        with open(f"/packages", "w") as f:
+            f.close()
     try:
         print("")
         main()
