@@ -1,3 +1,4 @@
+#["nano", "packages.nano", ["nano"]]
 import os
 import curses
 from pygments import highlight
