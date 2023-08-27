@@ -9,6 +9,13 @@ import ast
 if os.name != "nt":
     import readline
 import threading
+import signal
+
+def handler(signum, frame):
+    return
+
+# Set the signal handler
+signal.signal(signal.SIGINT, handler)
 
 
 
