@@ -11,12 +11,7 @@ if os.name != "nt":
 import threading
 import signal
 import requests
-
-def handler(signum, frame):
-    return
-
-# Set the signal handler
-signal.signal(signal.SIGINT, handler)
+import subprocess
 
 
 
@@ -25,12 +20,18 @@ class color:
     green = "\033[1;32m"
     blue = "\033[1;34m"
     white = "\033[0m"
-    green  = "\033[1;32m"
     red  = "\033[1;31m"
-    white  = "\033[0m"
-    blue  = "\033[1;34m"
     orange  = "\033[1;33m"
     
+def restart_program():
+    python = sys.executable
+    subprocess.call([python, __file__])
+    sys.exit()
+
+
+
+
+
     
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -139,19 +140,25 @@ class packagemanager:
     
     def install(self, name: str) -> int:
         try:
-            print("Checking for package source.")
-            with open(("./packages/"+name+".py"), "r") as f:
-                f.close()
+            if not os.path.exists(f"./packages/{name}.py"):
+                raise FileNotFoundError(name)
+                
+            
         except FileNotFoundError:
-            try:
+                print("Downloading File from Source")
                 url = f"https://raw.githubusercontent.com/OusmBlueNinja/TermPY/main/packages/{name}.py"
                 r = requests.get(url)
                 #print(r.text)
-                fileInstallingCreator = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.basename(url))
+                fileInstallingCreator = os.path.join(os.path.dirname(os.path.realpath(__file__)), "packages", name+".py")
+                print("Saving file to disk")
                 with open(fileInstallingCreator, "w") as newFile:
                     newFile.write(r.text)
-            except Exception as e:
-                raise Exception("Package could not be found, make sure package source is in [ packages ] folder.")
+                time.sleep(1)
+                call("helper.helper", "install", name, Packages)
+                print(f"{color.orange}WARNING: {color.white}Restarting Program")
+                restart_program()
+        except Exception as e:
+            raise Exception(f"Package could not be found, make sure package source is in [ packages ] folder. {e}")
         
         try:
             
@@ -258,9 +265,10 @@ def main():
 
 def start():
     try:
+        print("")
         main()
-    except KeyboardInterrupt:
-        start()
+    except (KeyboardInterrupt, EOFError):
+        restart_program()
 
 
 if __name__ == '__main__':
