@@ -199,6 +199,8 @@ class packagemanager:
 def handleCommands(command: list) -> list: 
     
     try:
+        if command[0] == "exit":
+            quit()
         if command[0] == "help":
             print("Type pakk for more help installing packages" )
             return [0,None]
