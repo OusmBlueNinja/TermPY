@@ -30,11 +30,12 @@ def upd(command):
         thread = threading.Thread(target=download_and_save, args=(url,))
         threads.append(thread)
         thread.start()
-
+    text = ""
     # Display loading animation
     while any(thread.is_alive() for thread in threads):
         for _ in range(len(threads)):
-            print(".", end="", flush=True)
+            text += "."
+            print(text+"\r", end="", flush=True)
             time.sleep(0.5)
     
     print("\nAll files downloaded and saved!")
