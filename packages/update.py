@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 #["pip", "packages.pip", ["pip"]]
 # Made By Blurple
 import os, sys
+
 
 def pip(command: list):
     
