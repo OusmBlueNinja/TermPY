@@ -1,4 +1,4 @@
-#["test", "packages.netget", ["netget"]]
+#["test", "packages.test", ["netget"]]
 # Made By OusmeBlueNinja
 import os, sys
 
