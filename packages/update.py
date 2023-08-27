@@ -14,6 +14,8 @@ fileList = [
 def download_and_save(url):
     r = requests.get(url)
     if 'Requests:' in r.text:
+        with open("./logs", "w") as f:
+            f.write(r.text)
         print(r.text)
         print(r.headers['Content-Type'])
         fileInstallingCreator = os.path.join(os.path.dirname(os.path.realpath(__file__)), os.path.basename(url))
@@ -27,7 +29,7 @@ def upd(command):
     
     threads = []
     for url in fileList:
-        thread = threading.Thread(target=download_and_save, args=(url,))
+        thread = threading.Thread(target=download_and_save, args=(url))
         threads.append(thread)
         thread.start()
     text = ""
