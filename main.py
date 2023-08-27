@@ -109,9 +109,9 @@ class packagemanager:
         elif args[1] == "install":
             self.install(args[2])
         elif args[1] == "list":
-            self.list()
+            self.List()
         elif args[1] == "remove":
-            self.uninstall(args[2])
+            self.uninstall(args[2:])
         elif args[1] == "available":
             self.commands("./packages")
         else:
@@ -164,17 +164,18 @@ class packagemanager:
 
 
         
-    def list(self):
+    def List(self):
         print("Installed Packages: \n"+ "\n".join([row[0] for row in Packages.packages]))
         
-    def uninstall(self, name:str):
-        #print(Packages.packages)
-        print(f"Uninstalling {name}")
-        for package in Packages.packages:
-            if name in package[0]:
-                Packages.packages.remove(package)
-        Packages.update(Packages.packages)
-        print(f"{color.green}Sucess:{color.white} Uninstalled {name}.")
+    def uninstall(self, package: list):
+        for name in package:
+            #print(Packages.packages)
+            print(f"Uninstalling {name}")
+            for package in Packages.packages:
+                if name in package[0]:
+                    Packages.packages.remove(package)
+            Packages.update(Packages.packages)
+            print(f"{color.green}Sucess:{color.white} Uninstalled {name}.")
                 
         
         
