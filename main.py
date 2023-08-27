@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 import os
 import sys
@@ -70,6 +71,7 @@ class color:
 def restart_program():
     python = sys.executable
     subprocess.call([python, __file__])
+    clear()
     sys.exit()
 
 try:
@@ -347,7 +349,10 @@ def start():
         print("")
         main()
     except (KeyboardInterrupt, EOFError):
-        restart_program()
+        try:
+            restart_program()
+        except (KeyboardInterrupt, EOFError):
+            restart_program()
 
 
 if __name__ == '__main__':
