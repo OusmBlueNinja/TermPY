@@ -159,7 +159,7 @@ class packagemanager:
             print(f"\n{color.green}Success:{color.white} Successfully installed {name}.")
 
         except Exception as e:
-            raise Exception(e)
+            raise Exception(f"{color.red}{e}")
 
 
 
