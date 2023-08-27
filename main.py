@@ -6,8 +6,7 @@ from inspect import isfunction
 import random
 import time
 import ast
-if os.name != 'nt':
-    import readline
+#import readline
 import threading
 
 
