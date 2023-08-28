@@ -63,6 +63,8 @@ class TextEditor:
 
     def display(self):
         print("Editing: " + self.file)
+        termSize = os.get_terminal_size()
+        colms = termSize[0]
         for i, line in enumerate(self.lines):
             highlighted_line = highlight(line, PythonLexer(), TerminalFormatter())
             print(f"{i + 1}: {highlighted_line}", end="")
