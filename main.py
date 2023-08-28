@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 import os
 import sys
@@ -54,7 +55,7 @@ def install(name:str, Packages:list):
 
             Packages.packages.append(toList(line))
             Packages.update(Packages.packages)
-            print(f"\n{color.green}Success:{color.white} Successfully installed {name}.")
+            print(f"{color.green}Success:{color.white} Successfully installed {name}.")
 
     except Exception as e:
         raise Exception(f"{color.red}{e}")'''
@@ -70,6 +71,7 @@ class color:
 def restart_program():
     python = sys.executable
     subprocess.call([python, __file__])
+    clear()
     sys.exit()
 
 try:
@@ -347,7 +349,10 @@ def start():
         print("")
         main()
     except (KeyboardInterrupt, EOFError):
-        restart_program()
+        try:
+            restart_program()
+        except (KeyboardInterrupt, EOFError):
+            restart_program()
 
 
 if __name__ == '__main__':

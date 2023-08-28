@@ -1,14 +1,18 @@
-import os
-import curses
+#["nano", "packages.nano", ["nano"]]
+
+import os, time
 from pygments import highlight
 from pygments.lexers import PythonLexer
 from pygments.formatters import TerminalFormatter
+
+
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 class TextEditor:
     def __init__(self):
         self.lines = []
         self.file = ""
-        self.cursor = (0, 0)  # (line, column)
 
     def load_file(self, filename):
         try:
@@ -23,82 +27,106 @@ class TextEditor:
         with open(filename, "w") as file:
             file.writelines(self.lines)
 
-    def edit(self, stdscr):
-        self.stdscr = stdscr
-        curses.curs_set(1)  # Show cursor
-        self.stdscr.clear()
-        self.display()
-
+    def edit(self):
         while True:
-            key = self.stdscr.getch()
+            os.system('cls' if os.name == 'nt' else 'clear')
+            self.display()
 
-            if key == curses.KEY_UP:
-                self.move_cursor(-1)
-            elif key == curses.KEY_DOWN:
-                self.move_cursor(1)
-            elif key == curses.KEY_LEFT:
-                self.move_cursor(0, -1)
-            elif key == curses.KEY_RIGHT:
-                self.move_cursor(0, 1)
-            elif key == ord('\n'):
+            action = input("\nCommands: [e]dit, [b]ulk-edit, [n]ewline, [s]ave, [q]uit: ").lower()
+
+            if action == "e":
+                self.edit_lines()
+            elif action == "n":
                 self.newline()
-            elif key == curses.KEY_BACKSPACE or key == 127:
-                self.delete_character()
-            elif key == 19:  # Ctrl + S
+            elif action == "s":
                 filename = input("Enter filename to save: ")
                 self.save_file(filename)
                 print(f"File '{filename}' saved.")
-            elif key == 17:  # Ctrl + Q
+            elif action == "q":
                 print("Exiting the text editor.")
                 break
-            elif key >= 32 and key <= 126:
-                self.insert_character(chr(key))
-            elif key == 27:  # Escape key
-                pass
 
-            self.stdscr.clear()
-            self.display()
+            elif action == 'b':
+                try:
+                    
+                    self.b_edit_lines()
+                    filename = self.file
+                    self.save_file(filename)
+                    print(f"File '{filename}' saved.")
+                except KeyboardInterrupt:
+                    self.save_file(filename)
+                    print(f"File '{filename}' saved.")
+                    
+                
+            else:
+                print("Invalid command.")
 
     def display(self):
-        self.stdscr.addstr(0, 0, "Editing: " + self.file)
+        print("Editing: " + self.file)
         for i, line in enumerate(self.lines):
             highlighted_line = highlight(line, PythonLexer(), TerminalFormatter())
-            if i == self.cursor[0]:
-                cursor_column = self.cursor[1]
-                self.stdscr.addstr(i + 1, 0, f"{i + 1}: {highlighted_line[:cursor_column]}{highlighted_line[cursor_column:]}")
-            else:
-                self.stdscr.addstr(i + 1, 0, f"{i + 1}: {highlighted_line}")
-
-    def move_cursor(self, line_change=0, column_change=0):
-        new_line = self.cursor[0] + line_change
-        new_column = self.cursor[1] + column_change
-
-        if 0 <= new_line < len(self.lines):
-            line_length = len(self.lines[new_line])
-            new_column = max(0, min(new_column, line_length))
-            self.cursor = (new_line, new_column)
-
+            print(f"{i + 1}: {highlighted_line}", end="")
+            
     def newline(self):
-        line, column = self.cursor
-        self.lines[line] = self.lines[line][:column] + '\n' + self.lines[line][column:]
-        self.move_cursor(1, 0)
+        self.lines.append("\n")
 
-    def delete_character(self):
-        line, column = self.cursor
-        if column > 0:
-            self.lines[line] = self.lines[line][:column - 1] + self.lines[line][column:]
-            self.move_cursor(0, -1)
-        elif line > 0:
-            prev_line_len = len(self.lines[line - 1])
-            self.lines[line - 1] = self.lines[line - 1][:-1] + self.lines[line]
-            self.lines.pop(line)
-            self.move_cursor(-1, prev_line_len)
-
-    def insert_character(self, char):
-        line, column = self.cursor
-        self.lines[line] = self.lines[line][:column] + char + self.lines[line][column:]
-        self.move_cursor(0, 1)
-
+    def edit_lines(self):
+        line_number = int(input("Enter line number to edit: ")) - 1
+        while line_number >= len(self.lines):
+            self.newline()
+        if 0 <= line_number < len(self.lines):
+            new_line = input("Enter new text: ")
+            self.lines[line_number] = new_line + "\n"
+        else:
+            print("Invalid line number.")
+            
+    def b_edit_lines(self):
+        
+        line_number = int(input("Enter line number to start: ")) - 1
+        #print(line_number, len(self.lines))
+        
+        if line_number <= -1:
+            print("Invalid line number.")
+            return
+        
+        while line_number >= len(self.lines):
+            self.newline()
+        #if -1 < line_number < len(self.lines):
+            #print("Invalid line number.")
+            #return
+        clear()
+        self.display()
+        
+        while True:
+            clear()
+            self.display()
+            if line_number >= len(self.lines):
+                self.newline()
+            
+            print(f"\n{' '*(len(str(line_number))+1)} {highlight(self.lines[line_number], PythonLexer(), TerminalFormatter())}", end="")
+            new_line = input(f"{line_number+1}: ")
+            if new_line == "":
+                new_line = " "
+            if new_line[0] == ':':
+                command = new_line.split(" ")
+                if command[0] == ":h":
+                    print("Commands:\n  :q -> save and return to prompt\n  :g -> goto line number <:g 11> (goes to line 11)")
+                    time.sleep(5)
+                    clear()
+                    continue
+                elif command[0] == ":q":
+                    self.save_file("")
+                    break
+                elif command[0] == ":g":
+                    gotoLine = int(command[1])   
+                    
+                    line_number = gotoLine -1
+                    continue
+                
+                
+                
+            self.lines[line_number] = new_line + "\n"
+            line_number +=1
 
 def nano(args):
     if len(args) != 1:
@@ -106,8 +134,8 @@ def nano(args):
     else:
         os.system('cls' if os.name == 'nt' else 'clear')
         filename = args[0]
-
+        
         editor = TextEditor()
         editor.file = filename
         editor.load_file(filename)
-        curses.wrapper(editor.edit)
+        editor.edit()
