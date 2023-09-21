@@ -1,7 +1,7 @@
 # ["calc", "packages.calc", ["calc"]]
 # Made By YourNameHere
 
-def calculator(command: list):
+def calc(command: list):
     if len(command) != 3:
         print("Usage: calculator [operand1] [operator] [operand2]")
         return
