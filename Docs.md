@@ -8,7 +8,14 @@
 4. run the command `pakk install <package name>`
 5. run any command in the package
 
-### the `pakk install` command will pull from internet in a future update
+## Download all packages
+
+1. run `pakk install update`
+2. run `upd`
+3. run `pakk available` < lists all downloaded packages >
+
+
+### the `pakk install` command will pull from internet
 ## Creating a package
 
 Once the package is installed, you can use the commands in it, here is how to make one.
@@ -16,7 +23,7 @@ Once the package is installed, you can use the commands in it, here is how to ma
 The top of the file must look like this;
 
 ```python
-#["name", "package.<package name>", ["commands, command"]]
+#["<package-name>", "package.<package-name>", ["command, command"]]
 # made by <your name here>
 ```
 
