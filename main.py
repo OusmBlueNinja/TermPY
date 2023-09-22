@@ -14,6 +14,44 @@ import signal
 import requests
 import subprocess
 
+import requests
+from bs4 import BeautifulSoup
+import subprocess
+
+# Hardcoded GitHub URL
+github_url = "https://raw.githubusercontent.com/OusmBlueNinja/TermPY/main/packages/"
+
+def githublist(command: list):
+    if len(command) != 0:
+        print("Usage: githublist")
+        return
+
+    try:
+        response = requests.get(github_url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            files = [a['href'] for a in soup.find_all('a', href=True)]
+
+            # Filter out directories and unwanted links
+            files = [file for file in files if not file.startswith("../") and not file.endswith("/")]
+
+            if files:
+                print("Files in the directory:")
+                for file in files:
+                    print(file)
+            else:
+                print("No files found in the directory.")
+        else:
+            print(f"Failed to retrieve content from {github_url}.")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+    try:
+        subprocess.run(["listgithub", github_url], check=True)
+    except subprocess.CalledProcessError:
+        print("Failed to list files using 'listgithub'. Make sure the 'listgithub' plugin is available.")
+
+
 helper = '''import ast
 class color:
     green = "\033[1;32m"
@@ -195,7 +233,12 @@ class packagemanager:
     def __init__(self, args):
         
         if len(args) <= 1:
-            print("Options:\ninstall <package name> | installs package \nlist                   | lists installed packages\nremove <package name>  | uninstall packages\navailable              | lists available commands")
+            print("""Options:
+            install <package name> | installs package 
+            list                   | lists installed packages
+            remove <package name>  | uninstall packages
+            available              | lists available commands
+            downloadable           | lists all packages on the server/db""")
        
         elif args[1] == "install":
             self.install(args[2])
@@ -205,10 +248,20 @@ class packagemanager:
             self.uninstall(args[2:])
         elif args[1] == "available":
             self.commands("./packages")
+        elif args[1] == "downloadable":
+            self.listDownloadable)
         else:
-            print("Options:\ninstall <package name> | installs package \nlist                   | lists installed packages\nremove <package name>  | uninstall packages\navailable              | lists available commands")
-       
+            print("""Options:
+            install <package name> | installs package 
+            list                   | lists installed packages
+            remove <package name>  | uninstall packages
+            available              | lists available commands
+            downloadable           | lists all packages on the server/db""")
         return
+
+    def listDownloadable(self):
+        githublist()
+
     
     
     def commands(self, directory):
