@@ -1,4 +1,4 @@
-# ["notebook", "packages.notebook", ["create", "list", "read", "delete"]]
+# ["notebook", "packages.notebook", ["create", "list_notes", "read", "delete"]]
 # Made By OusmBlueNinja
 
 # Dictionary to store notes (note name as key, note content as value)
